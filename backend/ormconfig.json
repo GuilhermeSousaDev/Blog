@@ -1,0 +1,17 @@
+{
+   "type": "mongodb",
+   "url": "mongodb+srv://Guilherme:guilherme3210@cluster0.bw3ka.mongodb.net/Cluster0?retryWrites=true&w=majority",
+   "synchronize": true,
+   "logging": false,
+   "useUnifiedTopology": true,
+   "entities": [
+      "src/modules/**/infra/typeorm/entities/*.ts"
+   ],
+   "subscribers": [
+      "src/subscriber/**/*.ts"
+   ],
+   "cli": {
+      "entitiesDir": "src/modules/**/infra/typeorm/entities/",
+      "subscribersDir": "src/subscriber"
+   }
+}

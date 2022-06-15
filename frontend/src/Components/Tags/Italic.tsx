@@ -5,7 +5,7 @@ import {
 
 const Italic: FC = () => {
     const [italicText, setItalicText] = useState<string>();
-    const [visibility, setVisibility] = useState<boolean>();
+    const [visibility, setVisibility] = useState<boolean>(false);
 
     return (
         <>

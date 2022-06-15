@@ -18,11 +18,11 @@ const CreatePost: FC = () => {
 
     const [permitedTags] = useState<string[]>([
         'h1','h6', 'img', 
-        'ul', 'ol', 'i',
+        'ul', 'ol', 'italic',
         'strong', 'video', 
     ])
     const [form, setForm] = useState<IForm>();
-    const [ tags ] = useState<string[]>([]);
+    const [tags, setTags] = useState<string[]>([]);
     const [show, setShow] = useState<boolean>();
     const [content, setContent] = useState<string>();
 
@@ -35,15 +35,18 @@ const CreatePost: FC = () => {
             if (slash.length === 1) {
                 const indexSlash = content.indexOf('/');
 
-                const findedTag = content.filter((c: string, i: number) => i > indexSlash);
+                const findedTag = content
+                    .filter((c: string, i: number) => i > indexSlash).join('')
 
                 window.addEventListener('keypress', (e: KeyboardEvent) => {
                     if (e.key === 'Enter') {
                         setTimeout(() => {
-                            if (permitedTags.includes(findedTag.join(''))) {
-                                tags.push(findedTag.join(''))
+                            if (permitedTags.includes(findedTag)) {
+                                setTags([
+                                    ...tags,
+                                    findedTag,
+                                ]);
                             }
-                            console.log(tags)
                             setShow(true);
                             textAreaRef.current.value = '';
                         }, 500);
@@ -71,10 +74,8 @@ const CreatePost: FC = () => {
                 ref={containerRef} 
             >
 
-            { tags && show? 
-                tags.map((tag, i) => <FilterTag key={i} tag={tag} /> ) : '' 
-            }
-                
+            { tags && show? <FilterTag tags={tags} /> : '' }
+
             <textarea 
                 onChange={e => setForm({
                     ...form,

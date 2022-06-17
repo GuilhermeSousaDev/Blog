@@ -1,12 +1,15 @@
 import React, { 
     FC, 
     MutableRefObject, 
+    useCallback, 
     useEffect, 
     useRef, 
     useState,
 } from 'react';
 import { Config, Container, TextArea } from './style';
 import FilterTag from '../../Components/FilterTag';
+import api from '../../services/Axios';
+import PublicPost from '../PublicPost';
 
 interface IForm {
     content: string;
@@ -17,7 +20,7 @@ const CreatePost: FC = () => {
     const textAreaRef = useRef() as MutableRefObject<HTMLTextAreaElement>;
 
     const [permitedTags] = useState<string[]>([
-        'h1','h6', 'img', 
+        'h1','h4', 'img', 
         'ul', 'ol', 'italic',
         'strong', 'video', 
     ])
@@ -25,8 +28,11 @@ const CreatePost: FC = () => {
     const [tags, setTags] = useState<string[]>([]);
     const [show, setShow] = useState<boolean>();
     const [content, setContent] = useState<string>();
+    const [finalizedPost, setFinalizedPost] = useState<boolean>(false);
 
     useEffect(() => {
+        console.log(content)
+
         if (form?.content.includes('/')) {
             const content = form?.content.split('');
 
@@ -59,31 +65,38 @@ const CreatePost: FC = () => {
 
     return (
         <Container>
-            <Config>
-                <h3>Tags que podem ser utilizadas</h3>
-                h1 h6 img 
-                ul ol i
-                strong video
-                <i>Para Chamar uma das tags digite: 
-                    <br /> / + "O nome da tag" <br />
-                    Ex: /img ou /h1
-                </i>
-            </Config>
-            <TextArea
-                onChange={() => setContent(containerRef.current.innerHTML)}
-                ref={containerRef} 
-            >
+            { finalizedPost === false ?
+                <>
+                    <Config>
+                        <h3>Tags que podem ser utilizadas</h3>
+                        h1 h6 img 
+                        ul ol i
+                        strong video
+                        <i>Para Chamar uma das tags digite: 
+                            <br /> / + "O nome da tag" <br />
+                            Ex: /img ou /h1
+                        </i>
+                        { content && <button onClick={() => setFinalizedPost(true)}>Postar</button> }
+                    </Config>
+                    <TextArea
+                        onChange={() => setContent(containerRef.current.innerHTML)}
+                        ref={containerRef} >
 
-            { tags && show? <FilterTag tags={tags} /> : '' }
+                        { tags && show? <FilterTag tags={tags} /> : '' }
 
-            <textarea 
-                onChange={e => setForm({
-                    ...form,
-                    content: e.target.value,
-                })} 
-                ref={textAreaRef}
-            ></textarea>
-            </TextArea>
+                        <textarea 
+                            onChange={e => setForm({
+                                ...form,
+                                content: e.target.value,
+                            })} 
+                            ref={textAreaRef}
+                        ></textarea>
+                    </TextArea>
+                </>
+                : ''
+            }
+
+            { finalizedPost && content? <PublicPost content={content} /> : '' }
         </Container>
     );
 }
